@@ -11,38 +11,46 @@ module.exports = (robot) ->
       robot.send room: job.room, job.message
     , null, true, "Asia/Tokyo"
 
-  job_table = []
-  for job, index in robot.brain.data.job_table
-    job_table[index] = job
-    job_table[index].worker = createWorker job
-
-  getJobs = ->
-    job_table
+  cloneJob = (job) ->
+    {time: job.time, room: job.room, message: job.message}
 
   addJob = (job) ->
-    robot.brain.data.job_table.push job
     job.worker = createWorker job
     job_table.push job
+    robot.brain.data.job_table.push cloneJob job
 
   deleteJob = (index) ->
     job_table[index]?.worker.stop()
     job_table.splice index, 1
     robot.brain.data.job_table.splice index, 1
 
+  job_table = []
+  for job, index in robot.brain.data.job_table
+    job_table[index] cloneJob job
+    job_table[index].worker = createWorker job
+
+  robot.hear /^alert help$/i, (msg) ->
+    msg.send """
+    alert list
+    alert add <second> <minute> <hour> <day> <month> <week> <message>
+    alert rm <alert id>
+    """
+
   robot.hear /^alert list$/i, (msg) ->
     console.log robot.brain.data
 
-    if getJobs().length == 0
+    if job_table.length == 0
       msg.send "empty jobs"
-
-    for job, i in getJobs()
-      msg.send "#{i} : #{job.room} - #{job.message}"
+    else
+      msg.send "no : room : time : message"
+      for job, i in job_table
+        msg.send "#{i} : ##{job.room} : #{job.time} : #{job.message}"
 
   robot.hear /^alert (add|make|set) ([^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+) (.+)/i, (msg) ->
     addJob(room: msg.message.room, time: msg.match[2], message: msg.match[3])
     console.log msg.match
     msg.send "good job"
 
-  robot.hear /^alert (del|rm|unset) ([0-9]+)$/i, (msg) ->
+  robot.hear /^alert (del|remove|rm|unset) ([0-9]+)$/i, (msg) ->
     deleteJob(msg.match[2])
     msg.send "job was deleted"
