@@ -25,9 +25,12 @@ module.exports = (robot) ->
     robot.brain.data.job_table.splice index, 1
 
   job_table = []
-  for job, index in robot.brain.data.job_table
-    job_table[index] cloneJob job
-    job_table[index].worker = createWorker job
+  initializeCron = ->
+    for job, index in robot.brain.data.job_table
+      job_table[index] = cloneJob job
+      job_table[index].worker = createWorker job
+
+  setTimeout(initializeCron, 1000 * 10);
 
   robot.hear /^alert help$/i, (msg) ->
     msg.send """
