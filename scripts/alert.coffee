@@ -49,7 +49,7 @@ module.exports = (robot) ->
       for job, i in job_table
         msg.send "#{i} : ##{job.room} : #{job.time} : #{job.message}"
 
-  robot.hear /^alert\s+(add|make|set)\s+(#([A-z0-9_-]+)\s+)?(.+)\s+(.+)/i, (msg) ->
+  robot.hear /^alert\s+(add|make|set)\s+(#([A-z0-9_-]+)\s+)?([^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+)\s+(.+)/i, (msg) ->
     addJob(room: msg.match[3] || msg.message.room, time: msg.match[4], message: msg.match[5])
     console.log msg.match
     msg.send "good job"
