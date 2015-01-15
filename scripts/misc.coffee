@@ -4,4 +4,4 @@ module.exports = (robot) ->
     robot.http(MEETING_CONTENTS_URL).get() (err, res, body) ->
       contents = JSON.parse body
       log = contents[contents.length - 2]
-      msg.send log.html_url
+      msg.send ":arrow_forward: #{log.html_url}"
