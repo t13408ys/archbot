@@ -32,15 +32,15 @@ module.exports = (robot) ->
 
   setTimeout(initializeCron, 1000 * 10);
 
-  robot.hear /^alert help$/i, (msg) ->
+  robot.hear /^alert\s+help$/i, (msg) ->
     msg.send """
     alert list
-    alert add <second> <minute> <hour> <day> <month> <week> <message>
+    alert add <channel>? <second> <minute> <hour> <day> <month> <week> <message>
     alert rm <alert id>
     """
 
-  robot.hear /^alert list$/i, (msg) ->
-    console.log robot.brain.data
+  robot.hear /^alert\s+list$/i, (msg) ->
+    console.log robot.brain.data.job_table
 
     if job_table.length == 0
       msg.send "empty jobs"
@@ -49,11 +49,11 @@ module.exports = (robot) ->
       for job, i in job_table
         msg.send "#{i} : ##{job.room} : #{job.time} : #{job.message}"
 
-  robot.hear /^alert (add|make|set) ([^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+) (.+)/i, (msg) ->
-    addJob(room: msg.message.room, time: msg.match[2], message: msg.match[3])
+  robot.hear /^alert\s+(add|make|set)\s+(#([A-z0-9_-]+)\s+)?(.+)\s+(.+)/i, (msg) ->
+    addJob(room: msg.match[3] || msg.message.room, time: msg.match[4], message: msg.match[5])
     console.log msg.match
     msg.send "good job"
 
-  robot.hear /^alert (del|remove|rm|unset) ([0-9]+)$/i, (msg) ->
+  robot.hear /^alert\s+(del|remove|rm|unset)\s+([0-9]+)$/i, (msg) ->
     deleteJob(msg.match[2])
     msg.send "job was deleted"
