@@ -11,7 +11,7 @@ module.exports = (robot) ->
     msg.send ":bento: BENTO LIST :bento:"
     for i, user of users
       if user.lastBento
-        msg.send "#{i} #{user.name} #{user.lastBento}"
+        msg.send "#{user.name} #{user.lastBento}"
 
   robot.hear /^bento\s+reset$/, (msg) ->
     users = robot.brain.users()
