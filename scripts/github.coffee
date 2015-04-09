@@ -11,5 +11,3 @@ module.exports = (robot) ->
       repo: 'documents'
       title: title
       labels: []
-    , (err, result) ->
-      msg.send "@#{msg.message.user.name} :ticket: #{result.html_url}"
