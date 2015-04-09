@@ -1,9 +1,10 @@
 module.exports = (robot) ->
-  MEETING_CONTENTS_URL = "https://api.github.com/repos/sfc-arch/meeting/contents"
+  MEETING_CONTENTS_URL = 'https://api.github.com/repos/sfc-arch/documents/contents/meeting'
+
   robot.hear /^議事録$/i, (msg) ->
     robot.http(MEETING_CONTENTS_URL).get() (err, res, body) ->
       contents = JSON.parse body
-      log = contents[contents.length - 2]
+      log = contents.pop()
       msg.send ":arrow_forward: #{log.html_url}"
 
   robot.hear /^お?弁当$/i, (msg) ->
