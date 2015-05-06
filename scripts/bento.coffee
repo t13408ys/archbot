@@ -25,7 +25,8 @@ module.exports = (robot) ->
       body: ":bento: 今週のお店 #{body}"
       labels: ['question']
     , (err, result) ->
-      msg.send "@channel :bento: #{date} 輪講会お弁当調査 #{result.html_url}"
+      console.log result.html_url
+      # msg.send "@channel :bento: #{date} 輪講会お弁当調査 #{result.html_url}"
 
   robot.respond /(.*(bento|:bento:|お?弁当).*)/i, (msg) ->
     user = robot.brain.userForId(msg.message.user.id)
