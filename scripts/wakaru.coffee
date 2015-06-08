@@ -18,11 +18,11 @@ module.exports = (robot) ->
           when "わかる"
             user.wakaru = 0 unless user.wakaru
             user.wakaru += 1
-            msg.send "#{user.name} #{user.wakaru} wakaru"
+            msg.send "#{user.name} #{user.wakaru} わかる"
           when "それな"
             user.sorena = 0 unless user.sorena
             user.sorena += 1
-            msg.send "#{user.name} #{user.sorena} sorena"
+            msg.send "#{user.name} #{user.sorena} それな"
           else
             msg.send "unknown unit"
       else
