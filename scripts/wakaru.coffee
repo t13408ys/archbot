@@ -13,12 +13,6 @@ module.exports = (robot) ->
         else if messages[1]
           robot.brain.userForId messages[1].user.id
 
-      amount =
-        if match[2].indexOf("わかる") == 0
-          parseInt(match[2].length/2)
-        else if match[2].indexOf("それな") == 0
-          -parseInt(match[2].length/2)
-
       if user
         switch match[2]
           when "わかる"
