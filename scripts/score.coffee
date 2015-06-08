@@ -1,5 +1,7 @@
+cron = (require 'cron').CronJob
+
 module.exports = (robot) ->
-  messages = [null, null]
+  last_users = []
   robot.brain.autoSave = true
 
   robot.hear //, (msg) ->
@@ -10,14 +12,12 @@ module.exports = (robot) ->
           robot.brain.userForName match[1]
         else if match[3]
           robot.brain.userForName match[3]
-        else if messages[1]
-          robot.brain.userForId messages[1].user.id
+        else if last_users[0]
+          robot.brain.userForId last_users[0]
 
       amount =
         if match[2].indexOf("+") == 0
           parseInt(match[2].length/2)
-        else if match[2].indexOf("-") == 0
-          -parseInt(match[2].length/2)
 
       if user
         user.score = 0 unless user.score
@@ -27,5 +27,35 @@ module.exports = (robot) ->
         msg.send "unknown user"
 
     else
-      messages.shift()
-      messages.push msg.message
+      last_users.pop()
+      last_users.unshift msg.message.user.id
+
+  robot.hear /score report/, (msg) ->
+    reportScore()
+
+  robot.hear /score reset/, (msg) ->
+    resetScore()
+
+  reportScore = ->
+    users = robot.brain.users()
+    users = (user for id, user of users)
+    active_users = users.reduce (result, user) ->
+      result.push user if user.score? && user.score > 0
+      result
+    , []
+    active_users.sort (a, b) ->
+      a - b
+
+    result_message = ("#{user.name} #{user.score}pt" for user in active_users).join("\n")
+    robot.send room: 'arch', result_message
+    robot.send room: 'arch', ":tada: CONGRATULATIONS *#{active_users.unshift().name}* :tada:"
+
+  resetScore = ->
+    for id, user of robot.brain.users()
+      user = robot.brain.userForId id
+      user.score = 0 if user.score?
+
+  new cron '0 30 18 * * 4', ->
+    reportScore()
+    resetScore()
+  , null, true, 'Asia/Tokyo'

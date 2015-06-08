@@ -1,6 +1,6 @@
 github = new (require 'github')
   version: '3.0.0'
-github.authenticate type: 'token', token: process.env['GITHUB_API_TOKEN']
+github.authenticate type: 'token', token: process.env['GITHUB_API_TOKEN'] if process.env['GITHUB_API_TOKEN']?
 
 module.exports = (robot) ->
   robot.hear /^issue\s+(.+)$/, (msg) ->
