@@ -44,11 +44,11 @@ module.exports = (robot) ->
       result
     , []
     active_users.sort (a, b) ->
-      a - b
+      b.score - a.score
 
     result_message = ("#{user.name} #{user.score}pt" for user in active_users).join("\n")
     robot.send room: 'arch', result_message
-    robot.send room: 'arch', ":tada: CONGRATULATIONS *#{active_users.unshift().name}* :tada:"
+    robot.send room: 'arch', ":tada: CONGRATULATIONS *#{active_users[0].name}* :tada:"
 
   resetScore = ->
     for id, user of robot.brain.users()
