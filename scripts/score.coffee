@@ -5,7 +5,7 @@ module.exports = (robot) ->
   robot.brain.autoSave = true
 
   robot.hear //, (msg) ->
-    if match = msg.message.text.match(/^([a-z0-9]+)?\s*(\+{2,}|-{2,})\s*([a-z0-9]+)?$/)
+    if match = msg.message.text.match(/^([a-z0-9]+)?\s*(\+{2,})\s*([a-z0-9]+)?$/)
 
       user =
         if match[1]
@@ -31,9 +31,9 @@ module.exports = (robot) ->
       last_users.unshift msg.message.user.id
 
   robot.hear /^score report$/, (msg) ->
-    reportScore()
+    reportScore(false)
 
-  reportScore = ->
+  reportScore = (detail) ->
     users = robot.brain.users()
     users = (user for id, user of users)
     active_users = users.reduce (result, user) ->
@@ -44,9 +44,12 @@ module.exports = (robot) ->
       b.score - a.score
 
     if active_users.length > 0
-      result_message = ("#{user.name} #{user.score}pt" for user in active_users).join("\n")
-      robot.send room: 'arch', result_message
-      robot.send room: 'arch', ":tada: CONGRATULATIONS *#{active_users[0]?.name}* :tada:"
+      if detail
+        result_message = ("#{user.name} #{user.score}pt" for user in active_users).join("\n")
+        robot.send room: 'arch', result_message
+        robot.send room: 'arch', ":tada: CONGRATULATIONS *#{active_users[0]?.name}* :tada:"
+      else
+        robot.send room: 'arch', "1ST IS *#{active_users[0]?.name}* :ok_woman:"
 
   resetScore = ->
     for id, user of robot.brain.users()
@@ -54,6 +57,6 @@ module.exports = (robot) ->
       user.score = 0 if user.score?
 
   new cron '0 30 18 * * 4', ->
-    reportScore()
+    reportScore(true)
     resetScore()
   , null, true, 'Asia/Tokyo'
