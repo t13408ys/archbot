@@ -5,7 +5,7 @@ module.exports = (robot) ->
   robot.brain.autoSave = true
 
   robot.hear //, (msg) ->
-    if match = msg.message.text.match(/^([a-z0-9_\-]+)?\s*(\+{2,})\s*([a-z0-9_\-]+)?$/)
+    if match = msg.message.text.match(/^([a-z0-9_-]+)?\s*(\+{2,})\s*([a-z0-9_-]+)?$/)
 
       user =
         if match[1]
